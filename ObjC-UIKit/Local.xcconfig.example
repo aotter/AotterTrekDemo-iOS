@@ -1,0 +1,14 @@
+// Copy to Local.xcconfig (git ignores it) and fill in your own IDs. Anything set here overrides Config.xcconfig.
+
+// AotterTrek: the client ID and the placements have to come from the same app in the AotterTrek console. While you
+// try AotterTrek through AdMob, leave them unset: the custom event has to use the client the app starts the SDK with.
+// AOTTERTREK_CLIENT_ID = your client ID
+// AOTTERTREK_NATIVE_PLACE_ID = a native placement
+// AOTTERTREK_SUPRAD_PLACE_ID = a SuprAd placement
+// AOTTERTREK_BANNER_PLACE_ID = a banner placement
+
+// AdMob: keep the app ID and the ad units from the same AdMob app. The Google Mobile Ads SDK stops the app at launch
+// when the app ID is missing or malformed.
+// GAD_APPLICATION_ID = ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX
+// ADMOB_NATIVE_AD_UNIT_ID = ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX
+// ADMOB_BANNER_AD_UNIT_ID = ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AdMobBannerAdUnitID</key>
+	<string>$(ADMOB_BANNER_AD_UNIT_ID)</string>
+	<key>AdMobNativeAdUnitID</key>
+	<string>$(ADMOB_NATIVE_AD_UNIT_ID)</string>
+	<key>AotterTrekBannerPlaceID</key>
+	<string>$(AOTTERTREK_BANNER_PLACE_ID)</string>
+	<key>AotterTrekClientID</key>
+	<string>$(AOTTERTREK_CLIENT_ID)</string>
+	<key>AotterTrekNativePlaceID</key>
+	<string>$(AOTTERTREK_NATIVE_PLACE_ID)</string>
+	<key>AotterTrekSuprAdPlaceID</key>
+	<string>$(AOTTERTREK_SUPRAD_PLACE_ID)</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>AotterTrek SwiftUI</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>GADApplicationIdentifier</key>
+	<string>$(GAD_APPLICATION_ID)</string>
+	<key>SKAdNetworkItems</key>
+	<array>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cstr6suwn9.skadnetwork</string>
+		</dict>
+	</array>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+</dict>
+</plist>

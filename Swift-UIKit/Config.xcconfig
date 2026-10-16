@@ -1,0 +1,19 @@
+// IDs the demo uses. The app reads them from Info.plist, which takes them from these build settings.
+//
+// AotterTrek: the public test client and placements from the AotterTrek docs ("Enable test ads"). They serve test ads;
+// replace them with your own before you ship.
+AOTTERTREK_CLIENT_ID = 21tgwWwuzFYiD4ko5Klr
+AOTTERTREK_NATIVE_PLACE_ID = bc47b614-7b24-4eb1-aae2-65e8de8e96de
+AOTTERTREK_SUPRAD_PLACE_ID = adcb5212-0453-4594-932a-104be11e521a
+AOTTERTREK_BANNER_PLACE_ID = 669bad6a-27ec-487a-a583-7b5305732ff7
+
+// AdMob: Google's sample app ID and demo ad units (developers.google.com/admob/ios/test-ads). They always serve
+// Google's own test ads, so the AdMob pages never reach the AotterTrek adapter with them. To see AotterTrek ads through
+// AdMob, copy Local.xcconfig.example to Local.xcconfig and put in your own AdMob app ID and ad units, set up as the
+// README describes.
+GAD_APPLICATION_ID = ca-app-pub-3940256099942544~1458002511
+ADMOB_NATIVE_AD_UNIT_ID = ca-app-pub-3940256099942544/3986624511
+ADMOB_BANNER_AD_UNIT_ID = ca-app-pub-3940256099942544/2435281174
+
+// Optional, not committed: overrides any value above.
+#include? "Local.xcconfig"

@@ -1,0 +1,402 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		075893F542F7EFB1FC928F2F /* TrekAdViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65931913CAEDD1F3F15EC173 /* TrekAdViews.swift */; };
+		25DF7D8CABB5A0CB1CA1C6ED /* AdMobNativeAdCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459A9B11D1CAC2677F84C84B /* AdMobNativeAdCard.swift */; };
+		34172CCE79BD11B74626CAC1 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 1A16362201CBFC56F5167387 /* GoogleMobileAds */; };
+		38C3CDB1C1EAEF9A26F15ED0 /* DemoViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB19909E7922C6690A2D08ED /* DemoViews.swift */; };
+		4187154A917D6D6A14262D19 /* AotterTrekAdMobMediation in Frameworks */ = {isa = PBXBuildFile; productRef = CD81A2D541902C4B68DC965E /* AotterTrekAdMobMediation */; };
+		4B878163C9A9FC4FFB21F2D4 /* SwiftUIDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB3C0CB21E4FCDC0905687AE /* SwiftUIDemoApp.swift */; };
+		764475A6DFE52DEB033B4F4B /* TrekNativeAdCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B463012B73FAE32383411626 /* TrekNativeAdCard.swift */; };
+		9F7B2F1B09EF3D556563B913 /* AdMobAdViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C27F196BA46E7A6FB36B13F /* AdMobAdViews.swift */; };
+		B11CDADD1BF9D4A48B3EC5BF /* Pages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F485581641A95C44B070A62 /* Pages.swift */; };
+		DFB60E79D5A47D3BB4B8BFBF /* DemoConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091ADA747F22342308981B39 /* DemoConfig.swift */; };
+		E21ECDBB610B1161E21ECDD1 /* AotterTrekSDK in Frameworks */ = {isa = PBXBuildFile; productRef = F8CAF6ABC14C7FB82FAFBBC2 /* AotterTrekSDK */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		091ADA747F22342308981B39 /* DemoConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoConfig.swift; sourceTree = "<group>"; };
+		0F485581641A95C44B070A62 /* Pages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pages.swift; sourceTree = "<group>"; };
+		1FAFBD28310C9CD4DA07A2D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		459A9B11D1CAC2677F84C84B /* AdMobNativeAdCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdMobNativeAdCard.swift; sourceTree = "<group>"; };
+		4C27F196BA46E7A6FB36B13F /* AdMobAdViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdMobAdViews.swift; sourceTree = "<group>"; };
+		65931913CAEDD1F3F15EC173 /* TrekAdViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrekAdViews.swift; sourceTree = "<group>"; };
+		A684C134FD4AEB3E72423399 /* SwiftUIDemo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SwiftUIDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B463012B73FAE32383411626 /* TrekNativeAdCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrekNativeAdCard.swift; sourceTree = "<group>"; };
+		B5E73BFF72CA7AD3D93A5CBC /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		BB19909E7922C6690A2D08ED /* DemoViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViews.swift; sourceTree = "<group>"; };
+		CB3C0CB21E4FCDC0905687AE /* SwiftUIDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIDemoApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D4F87E8088565B511393BBB9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E21ECDBB610B1161E21ECDD1 /* AotterTrekSDK in Frameworks */,
+				4187154A917D6D6A14262D19 /* AotterTrekAdMobMediation in Frameworks */,
+				34172CCE79BD11B74626CAC1 /* GoogleMobileAds in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2516AA77F25C71D90D68C3D1 /* SwiftUIDemo */ = {
+			isa = PBXGroup;
+			children = (
+				4C27F196BA46E7A6FB36B13F /* AdMobAdViews.swift */,
+				459A9B11D1CAC2677F84C84B /* AdMobNativeAdCard.swift */,
+				091ADA747F22342308981B39 /* DemoConfig.swift */,
+				BB19909E7922C6690A2D08ED /* DemoViews.swift */,
+				1FAFBD28310C9CD4DA07A2D3 /* Info.plist */,
+				0F485581641A95C44B070A62 /* Pages.swift */,
+				CB3C0CB21E4FCDC0905687AE /* SwiftUIDemoApp.swift */,
+				65931913CAEDD1F3F15EC173 /* TrekAdViews.swift */,
+				B463012B73FAE32383411626 /* TrekNativeAdCard.swift */,
+			);
+			path = SwiftUIDemo;
+			sourceTree = "<group>";
+		};
+		53466C10D58A3C1FCADFBA68 /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				B5E73BFF72CA7AD3D93A5CBC /* Config.xcconfig */,
+			);
+			name = SwiftUI;
+			path = .;
+			sourceTree = "<group>";
+		};
+		630EABA5B137A98E74B7958F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A684C134FD4AEB3E72423399 /* SwiftUIDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D33356E6D63AEA5468691956 = {
+			isa = PBXGroup;
+			children = (
+				53466C10D58A3C1FCADFBA68 /* SwiftUI */,
+				2516AA77F25C71D90D68C3D1 /* SwiftUIDemo */,
+				630EABA5B137A98E74B7958F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8379B37916B0986FB737A15D /* SwiftUIDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84659891AE8A31424F866912 /* Build configuration list for PBXNativeTarget "SwiftUIDemo" */;
+			buildPhases = (
+				C19E3134EDC0FDE85600BFB8 /* Sources */,
+				D4F87E8088565B511393BBB9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SwiftUIDemo;
+			packageProductDependencies = (
+				F8CAF6ABC14C7FB82FAFBBC2 /* AotterTrekSDK */,
+				CD81A2D541902C4B68DC965E /* AotterTrekAdMobMediation */,
+				1A16362201CBFC56F5167387 /* GoogleMobileAds */,
+			);
+			productName = SwiftUIDemo;
+			productReference = A684C134FD4AEB3E72423399 /* SwiftUIDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DCD2DBC83FB270BD25F366C6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					8379B37916B0986FB737A15D = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = E093688443E110D913621B5A /* Build configuration list for PBXProject "SwiftUIDemo" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = D33356E6D63AEA5468691956;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F3FE37DA3D6EB938DD532D99 /* XCRemoteSwiftPackageReference "AotterTrekMediation-iOS" */,
+				28F9D1F908EE347E1F9DCDE1 /* XCRemoteSwiftPackageReference "AotterTrekSDK-iOS" */,
+				968B782FE88D20441DBF8FEE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 630EABA5B137A98E74B7958F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8379B37916B0986FB737A15D /* SwiftUIDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C19E3134EDC0FDE85600BFB8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F7B2F1B09EF3D556563B913 /* AdMobAdViews.swift in Sources */,
+				25DF7D8CABB5A0CB1CA1C6ED /* AdMobNativeAdCard.swift in Sources */,
+				DFB60E79D5A47D3BB4B8BFBF /* DemoConfig.swift in Sources */,
+				38C3CDB1C1EAEF9A26F15ED0 /* DemoViews.swift in Sources */,
+				B11CDADD1BF9D4A48B3EC5BF /* Pages.swift in Sources */,
+				4B878163C9A9FC4FFB21F2D4 /* SwiftUIDemoApp.swift in Sources */,
+				075893F542F7EFB1FC928F2F /* TrekAdViews.swift in Sources */,
+				764475A6DFE52DEB033B4F4B /* TrekNativeAdCard.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		73044E9C97135307CCE71C55 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SwiftUIDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = "$(inherited) -ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.aotter.AotterTrekDemo.SwiftUI;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		77131231024D546208518934 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5E73BFF72CA7AD3D93A5CBC /* Config.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		C63F662C3D25F6EF68F9E642 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SwiftUIDemo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = "$(inherited) -ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.aotter.AotterTrekDemo.SwiftUI;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		E0C8E0083CB451D9D9488898 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B5E73BFF72CA7AD3D93A5CBC /* Config.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		84659891AE8A31424F866912 /* Build configuration list for PBXNativeTarget "SwiftUIDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				73044E9C97135307CCE71C55 /* Debug */,
+				C63F662C3D25F6EF68F9E642 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E093688443E110D913621B5A /* Build configuration list for PBXProject "SwiftUIDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E0C8E0083CB451D9D9488898 /* Debug */,
+				77131231024D546208518934 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		28F9D1F908EE347E1F9DCDE1 /* XCRemoteSwiftPackageReference "AotterTrekSDK-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/aotter/AotterTrekSDK-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+		968B782FE88D20441DBF8FEE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.0.0;
+			};
+		};
+		F3FE37DA3D6EB938DD532D99 /* XCRemoteSwiftPackageReference "AotterTrekMediation-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/aotter/AotterTrekMediation-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1A16362201CBFC56F5167387 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 968B782FE88D20441DBF8FEE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+		CD81A2D541902C4B68DC965E /* AotterTrekAdMobMediation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F3FE37DA3D6EB938DD532D99 /* XCRemoteSwiftPackageReference "AotterTrekMediation-iOS" */;
+			productName = AotterTrekAdMobMediation;
+		};
+		F8CAF6ABC14C7FB82FAFBBC2 /* AotterTrekSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 28F9D1F908EE347E1F9DCDE1 /* XCRemoteSwiftPackageReference "AotterTrekSDK-iOS" */;
+			productName = AotterTrekSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = DCD2DBC83FB270BD25F366C6 /* Project object */;
+}

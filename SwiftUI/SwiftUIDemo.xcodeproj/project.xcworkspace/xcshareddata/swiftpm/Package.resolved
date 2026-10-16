@@ -1,0 +1,51 @@
+{
+  "originHash" : "0d854baee2d301409c6a5faee236b1fbd41129c94fcf5890609c4d1f9a9d2c5d",
+  "pins" : [
+    {
+      "identity" : "aottertrekmediation-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/aotter/AotterTrekMediation-iOS",
+      "state" : {
+        "revision" : "03b8a4fedee8296c7b56f99b3d61204d72ee0074",
+        "version" : "5.0.0"
+      }
+    },
+    {
+      "identity" : "aottertreksdk-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/aotter/AotterTrekSDK-iOS",
+      "state" : {
+        "revision" : "f64ac8a9842ebbf751f0aeb61e0fc7b8e0232aa0",
+        "version" : "5.0.0"
+      }
+    },
+    {
+      "identity" : "applovin-max-swift-package",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AppLovin/AppLovin-MAX-Swift-Package.git",
+      "state" : {
+        "revision" : "02544c3400d228cce5718e22f71f8d02787ba91e",
+        "version" : "13.6.4"
+      }
+    },
+    {
+      "identity" : "swift-package-manager-google-mobile-ads",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/googleads/swift-package-manager-google-mobile-ads",
+      "state" : {
+        "revision" : "d1fa1f5c1dfe3b43d56c73f4de388ad3316618bc",
+        "version" : "13.11.0"
+      }
+    },
+    {
+      "identity" : "swift-package-manager-google-user-messaging-platform",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git",
+      "state" : {
+        "revision" : "13b248eaa73b7826f0efb1bcf455e251d65ecb1b",
+        "version" : "3.1.0"
+      }
+    }
+  ],
+  "version" : 3
+}
