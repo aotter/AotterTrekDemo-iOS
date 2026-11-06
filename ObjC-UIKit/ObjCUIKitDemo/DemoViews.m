@@ -10,9 +10,10 @@ static NSString *DemoInfoValue(NSString *key) {
 @implementation DemoConfig
 + (NSString *)clientID { return DemoInfoValue(@"AotterTrekClientID"); }
 + (NSString *)nativePlaceID { return DemoInfoValue(@"AotterTrekNativePlaceID"); }
-+ (NSString *)suprAdPlaceID { return DemoInfoValue(@"AotterTrekSuprAdPlaceID"); }
++ (NSString *)nativeMultimediaPlaceID { return DemoInfoValue(@"AotterTrekNativeMultimediaPlaceID"); }
 + (NSString *)bannerPlaceID { return DemoInfoValue(@"AotterTrekBannerPlaceID"); }
 + (NSString *)adMobNativeAdUnitID { return DemoInfoValue(@"AdMobNativeAdUnitID"); }
++ (NSString *)adMobNativeMultimediaAdUnitID { return DemoInfoValue(@"AdMobNativeMultimediaAdUnitID"); }
 + (NSString *)adMobBannerAdUnitID { return DemoInfoValue(@"AdMobBannerAdUnitID"); }
 @end
 
@@ -79,24 +80,14 @@ UILabel *DemoParagraph(NSInteger number) {
     return label;
 }
 
-static void DemoPinWithBottomPriority(UIView *view, UIView *container, CGFloat inset, UILayoutPriority bottomPriority) {
+void DemoPin(UIView *view, UIView *container, CGFloat inset) {
     view.translatesAutoresizingMaskIntoConstraints = NO;
-    NSLayoutConstraint *bottom = [view.bottomAnchor constraintEqualToAnchor:container.bottomAnchor constant:-inset];
-    bottom.priority = bottomPriority;
     [NSLayoutConstraint activateConstraints:@[
         [view.topAnchor constraintEqualToAnchor:container.topAnchor constant:inset],
         [view.leadingAnchor constraintEqualToAnchor:container.leadingAnchor constant:inset],
         [view.trailingAnchor constraintEqualToAnchor:container.trailingAnchor constant:-inset],
-        bottom,
+        [view.bottomAnchor constraintEqualToAnchor:container.bottomAnchor constant:-inset],
     ]];
-}
-
-void DemoPin(UIView *view, UIView *container, CGFloat inset) {
-    DemoPinWithBottomPriority(view, container, inset, UILayoutPriorityRequired);
-}
-
-void DemoPinInRow(UIView *view, UIView *contentView, CGFloat inset) {
-    DemoPinWithBottomPriority(view, contentView, inset, UILayoutPriorityDefaultHigh);
 }
 
 NSString *DemoAdMobNetwork(GADResponseInfo *responseInfo) {

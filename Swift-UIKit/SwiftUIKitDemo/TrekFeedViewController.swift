@@ -1,12 +1,12 @@
 import UIKit
 import AotterTrekSDK
 
-/// A feed with two ad slots: a native placement and a SuprAd placement. The same code shows both; the response
-/// decides how the ad renders.
+/// A feed with two ad slots: a native placement and a Native Multimedia Ad placement. The same code shows both; the
+/// response decides how the ad renders.
 final class TrekFeedViewController: UITableViewController, ATKAdLoaderDelegate {
 
     /// One ad slot. It keeps its own cell, so the table never hands the ad to another row: a second bind moves the
-    /// ad, and a SuprAd that has started does not survive the move.
+    /// ad, and a Native Multimedia Ad that has started does not survive the move.
     private final class AdSlot {
         let row: Int
         let placeID: String
@@ -19,8 +19,7 @@ final class TrekFeedViewController: UITableViewController, ATKAdLoaderDelegate {
             self.placeID = placeID
             cell.selectionStyle = .none
             cell.contentView.addSubview(card)
-            card.pin(to: cell.contentView, inset: 12, bottomPriority: .defaultHigh)   // the row collapses while the card is hidden
-            card.isHidden = true
+            card.pin(to: cell.contentView, inset: 12)
         }
     }
 
@@ -28,8 +27,11 @@ final class TrekFeedViewController: UITableViewController, ATKAdLoaderDelegate {
     private let postCount = 20
     private let slots = [
         AdSlot(row: 3, placeID: DemoConfig.nativePlaceID),
-        AdSlot(row: 10, placeID: DemoConfig.suprAdPlaceID),
+        AdSlot(row: 10, placeID: DemoConfig.nativeMultimediaPlaceID),
     ]
+    /// The rows on screen, by their number in the full feed: the posts, and a slot's row once its ad has arrived.
+    private lazy var rows: [(number: Int, slot: AdSlot?)] =
+        (0..<postCount + slots.count).filter { number in !slots.contains { $0.row == number } }.map { ($0, nil) }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,8 +63,9 @@ final class TrekFeedViewController: UITableViewController, ATKAdLoaderDelegate {
     func adLoader(_ adLoader: ATKAdLoader, didReceive ad: ATKNativeAdData) {
         guard let slot = slot(for: adLoader) else { return ad.destroy() }
         slot.card.show(ad, from: self)
-        slot.card.isHidden = false
-        tableView.performBatchUpdates(nil)   // the slot's row grows to fit the ad
+        let index = rows.firstIndex { $0.number > slot.row } ?? rows.count
+        rows.insert((slot.row, slot), at: index)
+        tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .none)   // the row comes in at the height of its ad
         status.show("Ad received for row \(slot.row): \(ad.title)")
     }
 
@@ -75,25 +78,20 @@ final class TrekFeedViewController: UITableViewController, ATKAdLoaderDelegate {
     // MARK: table
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        postCount + slots.count
+        rows.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let slot = slots.first(where: { $0.row == indexPath.row }) {
+        let row = rows[indexPath.row]
+        if let slot = row.slot {
             return slot.cell
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: "Post", for: indexPath)
-        cell.textLabel?.text = "Post \(indexPath.row)"
+        cell.textLabel?.text = "Post \(row.number)"
         return cell
     }
 
-    /// An ad row has no height until its ad arrives, or at all when there is no ad.
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let slot = slots.first { $0.row == indexPath.row }
-        return slot?.card.isHidden == true ? 0 : UITableView.automaticDimension
-    }
-
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        slots.forEach { $0.card.adView.notifyAdScrolled() }   // SuprAd creatives that follow the scroll
+        AotterTrekSDK.notifyAdScrolled()   // Native Multimedia Ads that move with the page
     }
 }

@@ -7,15 +7,14 @@ import AotterTrekSDK
 struct TrekNativePage: View {
     @State private var status = ""
     @State private var reload = 0
-    @State private var scrolled = 0
     @State private var adHeight: CGFloat = 0
 
     var body: some View {
-        ScrollCountingView(scrolled: $scrolled) {
+        AdScrollView {
             VStack(spacing: 16) {
                 StatusText(message: status)
                 Paragraph(number: 1)
-                TrekNativeAdSlot(placeID: DemoConfig.nativePlaceID, reload: reload, scrolled: scrolled,
+                TrekNativeAdSlot(placeID: DemoConfig.nativePlaceID, reload: reload,
                                  status: StatusReporter { status = $0 }, height: $adHeight)
                     .frame(height: adHeight)
                 Paragraph(number: 2)
@@ -28,21 +27,20 @@ struct TrekNativePage: View {
     }
 }
 
-/// A feed with two ad slots: a native placement and a SuprAd placement. The same code shows both; the response
-/// decides how the ad renders.
+/// A feed with two ad slots: a native placement and a Native Multimedia Ad placement. The same code shows both; the
+/// response decides how the ad renders.
 struct TrekFeedPage: View {
-    private let slots = [3: DemoConfig.nativePlaceID, 10: DemoConfig.suprAdPlaceID]   // row: place
+    private let slots = [3: DemoConfig.nativePlaceID, 10: DemoConfig.nativeMultimediaPlaceID]   // row: place
     @State private var status = ""
     @State private var heights: [Int: CGFloat] = [:]
-    @State private var scrolled = 0
 
     var body: some View {
-        ScrollCountingView(scrolled: $scrolled) {
+        AdScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 StatusText(message: status).padding()
                 ForEach(0..<22, id: \.self) { row in
                     if let placeID = slots[row] {
-                        TrekNativeAdSlot(placeID: placeID, scrolled: scrolled,
+                        TrekNativeAdSlot(placeID: placeID,
                                          status: StatusReporter { status = "Row \(row): \($0)" },
                                          height: Binding(get: { heights[row] ?? 0 }, set: { heights[row] = $0 }))
                             .frame(height: heights[row] ?? 0)
@@ -59,10 +57,9 @@ struct TrekFeedPage: View {
     }
 }
 
-/// A ScrollView that counts its scrolling into `scrolled`. The AotterTrek ad slots take the count and tell their ad
-/// when it changes, for SuprAd creatives that follow the scroll.
-struct ScrollCountingView<Content: View>: View {
-    @Binding var scrolled: Int
+/// A ScrollView that tells AotterTrekSDK each time its content moves, for Native Multimedia Ads that move with the
+/// page, the ones shown through AdMob included. Every ad page scrolls in one.
+struct AdScrollView<Content: View>: View {
     @ViewBuilder let content: () -> Content
 
     var body: some View {
@@ -72,7 +69,7 @@ struct ScrollCountingView<Content: View>: View {
             })
         }
         .coordinateSpace(name: "page")
-        .onPreferenceChange(ScrollOffsetKey.self) { _ in scrolled += 1 }
+        .onPreferenceChange(ScrollOffsetKey.self) { _ in AotterTrekSDK.notifyAdScrolled() }
     }
 }
 
@@ -81,19 +78,18 @@ private struct ScrollOffsetKey: PreferenceKey {
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
 }
 
-/// An AotterTrek banner. The server decides its size.
+/// An AotterTrek banner, as wide as the page. The server decides its proportions.
 struct TrekBannerPage: View {
     @State private var status = ""
     @State private var reload = 0
-    @State private var scrolled = 0
     @State private var bannerHeight: CGFloat = 0
 
     var body: some View {
-        ScrollCountingView(scrolled: $scrolled) {
+        AdScrollView {
             VStack(spacing: 16) {
                 StatusText(message: status)
                 Paragraph(number: 1)
-                TrekBannerSlot(placeID: DemoConfig.bannerPlaceID, reload: reload, scrolled: scrolled,
+                TrekBannerSlot(placeID: DemoConfig.bannerPlaceID, reload: reload,
                                status: StatusReporter { status = $0 }, height: $bannerHeight)
                     .frame(height: bannerHeight)
                 Paragraph(number: 2)
@@ -114,7 +110,7 @@ struct AdMobNativePage: View {
     @State private var adHeight: CGFloat = 0
 
     var body: some View {
-        ScrollView {
+        AdScrollView {
             VStack(spacing: 16) {
                 StatusText(message: status)
                 Paragraph(number: 1)
@@ -131,20 +127,22 @@ struct AdMobNativePage: View {
     }
 }
 
+/// A feed with two ad slots: a native ad unit and a Native Multimedia Ad unit.
 struct AdMobFeedPage: View {
-    private let adRow = 3
+    private let slots = [3: DemoConfig.adMobNativeAdUnitID, 10: DemoConfig.adMobNativeMultimediaAdUnitID]   // row: ad unit
     @State private var status = ""
-    @State private var adHeight: CGFloat = 0
+    @State private var heights: [Int: CGFloat] = [:]
 
     var body: some View {
-        ScrollView {
+        AdScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 StatusText(message: status).padding()
-                ForEach(0..<21, id: \.self) { row in
-                    if row == adRow {
-                        AdMobNativeAdSlot(adUnitID: DemoConfig.adMobNativeAdUnitID,
-                                          status: StatusReporter { status = $0 }, height: $adHeight)
-                            .frame(height: adHeight)
+                ForEach(0..<22, id: \.self) { row in
+                    if let adUnitID = slots[row] {
+                        AdMobNativeAdSlot(adUnitID: adUnitID,
+                                          status: StatusReporter { status = "Row \(row): \($0)" },
+                                          height: Binding(get: { heights[row] ?? 0 }, set: { heights[row] = $0 }))
+                            .frame(height: heights[row] ?? 0)
                             .padding(.horizontal)
                     } else {
                         Text("Post \(row)").padding()
@@ -166,7 +164,7 @@ struct AdMobBannerPage: View {
     var body: some View {
         GeometryReader { proxy in
             let width = proxy.size.width - 32   // the app runs in portrait only, so the width does not change
-            ScrollView {
+            AdScrollView {
                 VStack(spacing: 16) {
                     StatusText(message: status)
                     Paragraph(number: 1)

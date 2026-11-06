@@ -9,6 +9,7 @@
     UILabel *_bodyLabel;
     UIButton *_callToActionButton;
     NSLayoutConstraint *_mediaHeight;
+    NSLayoutConstraint *_sponsorWidth;   // the label's own width: a long title gives way to it
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -36,15 +37,13 @@
     _sponsorBadge.textAlignment = NSTextAlignmentCenter;
     _sponsorBadge.textColor = UIColor.whiteColor;
     _sponsorBadge.backgroundColor = [UIColor colorWithRed:0xC9 / 255.0 green:0x34 / 255.0 blue:0 alpha:1];   // white text reads at 5.3:1
-    // The label keeps its own width: a long title gives way to it.
-    [_sponsorBadge setContentHuggingPriority:UILayoutPriorityRequired - 1 forAxis:UILayoutConstraintAxisHorizontal];
-    [_sponsorBadge setContentCompressionResistancePriority:UILayoutPriorityRequired - 1 forAxis:UILayoutConstraintAxisHorizontal];
     _sponsorBadge.layer.cornerRadius = 3;
     _sponsorBadge.clipsToBounds = YES;
     _bodyLabel = [[UILabel alloc] init];
     _bodyLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
     _bodyLabel.numberOfLines = 3;
     _callToActionButton = [UIButton buttonWithConfiguration:UIButtonConfiguration.filledButtonConfiguration primaryAction:nil];
+    _callToActionButton.userInteractionEnabled = NO;   // so the tap reaches adView, for every ad type
 
     UIStackView *titles = [[UIStackView alloc] initWithArrangedSubviews:@[_titleLabel, _advertiserLabel]];
     titles.axis = UILayoutConstraintAxisVertical;
@@ -60,7 +59,6 @@
     [NSLayoutConstraint activateConstraints:@[
         [_iconView.widthAnchor constraintEqualToConstant:40],
         [_iconView.heightAnchor constraintEqualToConstant:40],
-        [_sponsorBadge.widthAnchor constraintGreaterThanOrEqualToConstant:15],
         [_sponsorBadge.heightAnchor constraintGreaterThanOrEqualToConstant:15],
     ]];
 
@@ -73,6 +71,9 @@
     _titleLabel.text = ad.title;
     _advertiserLabel.text = ad.advertiserName;
     _sponsorBadge.text = [NSString stringWithFormat:@" %@ ", ad.sponsor.length > 0 ? ad.sponsor : @"Sponsored"];
+    _sponsorWidth.active = NO;
+    _sponsorWidth = [_sponsorBadge.widthAnchor constraintEqualToConstant:MAX(15, ceil(_sponsorBadge.intrinsicContentSize.width))];
+    _sponsorWidth.active = YES;
     _bodyLabel.text = ad.text;
     [_callToActionButton setTitle:(ad.callToAction.length > 0 ? ad.callToAction : @"Learn more") forState:UIControlStateNormal];
     [self loadIconFrom:(ad.imgIconHd.length > 0 ? ad.imgIconHd : ad.imgIcon)];
@@ -89,7 +90,7 @@
 
 - (void)loadIconFrom:(NSString *)urlString {
     _iconView.image = nil;
-    _iconView.hidden = urlString.length == 0;   // a SuprAd can come without an icon
+    _iconView.hidden = urlString.length == 0;   // a Native Multimedia Ad can come without an icon
     NSURL *url = [NSURL URLWithString:urlString];
     if (!url) return;
     __weak typeof(self) weakSelf = self;

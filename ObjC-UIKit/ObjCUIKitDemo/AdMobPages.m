@@ -30,6 +30,10 @@
     [_adLoader loadRequest:[GADRequest request]];
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [AotterTrekSDK notifyAdScrolled];   // Native Multimedia Ads that move with the page, also through the adapter
+}
+
 - (void)adLoader:(GADAdLoader *)adLoader didReceiveNativeAd:(GADNativeAd *)nativeAd {
     if (adLoader != _adLoader) return;   // a reload replaced this loader
     nativeAd.delegate = self;
@@ -55,48 +59,98 @@
 
 #pragma mark - Native ads in a feed
 
+/// One ad slot. It keeps its own cell, so the table never hands the ad to another row.
+@interface AdMobAdSlot : NSObject
+@property (nonatomic, readonly) NSInteger row;
+@property (nonatomic, readonly) NSString *adUnitID;
+@property (nonatomic, readonly) AdMobNativeAdCard *card;
+@property (nonatomic, readonly) UITableViewCell *cell;
+@property (nonatomic, strong) GADAdLoader *adLoader;
+@end
+
+@implementation AdMobAdSlot
+
+- (instancetype)initWithRow:(NSInteger)row adUnitID:(NSString *)adUnitID {
+    if (!(self = [super init])) return nil;
+    _row = row;
+    _adUnitID = adUnitID;
+    _card = [[AdMobNativeAdCard alloc] init];
+    _cell = [[UITableViewCell alloc] init];
+    _cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    [_cell.contentView addSubview:_card];
+    DemoPin(_card, _cell.contentView, 12);
+    return self;
+}
+
+@end
+
 @interface AdMobFeedViewController () <GADNativeAdLoaderDelegate, GADNativeAdDelegate>
 @end
 
 @implementation AdMobFeedViewController {
     StatusLabel *_status;
-    UITableViewCell *_adCell;   // the ad row keeps its own cell, so the table never hands the ad to another row
-    AdMobNativeAdCard *_card;
-    GADAdLoader *_adLoader;
+    NSArray<AdMobAdSlot *> *_slots;
+    NSMutableArray *_rows;   // the rows on screen: a post's number (NSNumber), and a slot once its ad has arrived
 }
 
 static const NSInteger kAdMobFeedPostCount = 20;
-static const NSInteger kAdMobFeedAdRow = 3;
+
+/// A row's number in the full feed.
+static NSInteger AdMobFeedRowNumber(id row) {
+    return [row isKindOfClass:AdMobAdSlot.class] ? ((AdMobAdSlot *)row).row : [row integerValue];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.tableView registerClass:UITableViewCell.class forCellReuseIdentifier:@"Post"];
     _status = [[StatusLabel alloc] initWithFrame:CGRectMake(0, 0, 0, 44)];
     self.tableView.tableHeaderView = _status;
-    _card = [[AdMobNativeAdCard alloc] init];
-    _adCell = [[UITableViewCell alloc] init];
-    _adCell.selectionStyle = UITableViewCellSelectionStyleNone;
-    [_adCell.contentView addSubview:_card];
-    DemoPinInRow(_card, _adCell.contentView, 12);   // the row collapses while the card is hidden
-    _card.hidden = YES;
+    _slots = @[   // one ad unit per AotterTrek placement type
+        [[AdMobAdSlot alloc] initWithRow:3 adUnitID:DemoConfig.adMobNativeAdUnitID],
+        [[AdMobAdSlot alloc] initWithRow:10 adUnitID:DemoConfig.adMobNativeMultimediaAdUnitID],
+    ];
+    _rows = [NSMutableArray array];
+    for (NSInteger number = 0; number < kAdMobFeedPostCount + (NSInteger)_slots.count; number++) {
+        BOOL isSlot = NO;
+        for (AdMobAdSlot *slot in _slots) if (slot.row == number) isSlot = YES;
+        if (!isSlot) [_rows addObject:@(number)];
+    }
+    for (AdMobAdSlot *slot in _slots) [self load:slot];
+}
 
-    _adLoader = [[GADAdLoader alloc] initWithAdUnitID:DemoConfig.adMobNativeAdUnitID rootViewController:self
-                                              adTypes:@[GADAdLoaderAdTypeNative] options:nil];
-    _adLoader.delegate = self;
-    [_status show:@"Loading a native ad through AdMob…"];
-    [_adLoader loadRequest:[GADRequest request]];
+- (void)load:(AdMobAdSlot *)slot {
+    slot.adLoader = [[GADAdLoader alloc] initWithAdUnitID:slot.adUnitID rootViewController:self
+                                                  adTypes:@[GADAdLoaderAdTypeNative] options:nil];
+    slot.adLoader.delegate = self;
+    [_status show:@"Loading ads through AdMob…"];
+    [slot.adLoader loadRequest:[GADRequest request]];
+}
+
+- (AdMobAdSlot *)slotForLoader:(GADAdLoader *)adLoader {
+    for (AdMobAdSlot *slot in _slots) if (slot.adLoader == adLoader) return slot;
+    return nil;
 }
 
 - (void)adLoader:(GADAdLoader *)adLoader didReceiveNativeAd:(GADNativeAd *)nativeAd {
+    AdMobAdSlot *slot = [self slotForLoader:adLoader];
+    if (!slot) return;
     nativeAd.delegate = self;
-    _card.hidden = NO;   // before showAd:, which registers the ad with the card's views at their size
-    [_card showAd:nativeAd];
-    [self.tableView performBatchUpdates:nil completion:nil];   // the ad row grows to fit the ad
-    [_status show:[NSString stringWithFormat:@"AdMob native ad received from %@", DemoAdMobNetwork(nativeAd.responseInfo)]];
+    [slot.card fillAd:nativeAd];
+    NSUInteger index = _rows.count;
+    for (NSUInteger i = 0; i < _rows.count; i++) if (AdMobFeedRowNumber(_rows[i]) > slot.row) { index = i; break; }
+    [_rows insertObject:slot atIndex:index];
+    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]]
+                          withRowAnimation:UITableViewRowAnimationNone];   // the row comes in at the height of its ad
+    AdMobNativeAdCard *card = slot.card;
+    dispatch_async(dispatch_get_main_queue(), ^{ [card registerAd:nativeAd]; });   // once the row has laid the card out at its size
+    [_status show:[NSString stringWithFormat:@"AdMob native ad received for row %ld from %@", (long)slot.row,
+                   DemoAdMobNetwork(nativeAd.responseInfo)]];
 }
 
 - (void)adLoader:(GADAdLoader *)adLoader didFailToReceiveAdWithError:(NSError *)error {
-    [_status show:[NSString stringWithFormat:@"No AdMob native ad: %@", error.localizedDescription]];
+    AdMobAdSlot *slot = [self slotForLoader:adLoader];
+    if (!slot) return;
+    [_status show:[NSString stringWithFormat:@"No AdMob native ad for row %ld: %@", (long)slot.row, error.localizedDescription]];
 }
 
 - (void)nativeAdDidRecordImpression:(GADNativeAd *)nativeAd {
@@ -108,19 +162,19 @@ static const NSInteger kAdMobFeedAdRow = 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return kAdMobFeedPostCount + 1;
+    return _rows.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == kAdMobFeedAdRow) return _adCell;
+    id row = _rows[indexPath.row];
+    if ([row isKindOfClass:AdMobAdSlot.class]) return ((AdMobAdSlot *)row).cell;
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Post" forIndexPath:indexPath];
-    cell.textLabel.text = [NSString stringWithFormat:@"Post %ld", (long)indexPath.row];
+    cell.textLabel.text = [NSString stringWithFormat:@"Post %ld", (long)AdMobFeedRowNumber(row)];
     return cell;
 }
 
-/// The ad row has no height until its ad arrives, or at all when there is no ad.
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return indexPath.row == kAdMobFeedAdRow && _card.hidden ? 0 : UITableViewAutomaticDimension;
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [AotterTrekSDK notifyAdScrolled];   // Native Multimedia Ads that move with the page, also through the adapter
 }
 
 @end
@@ -162,6 +216,10 @@ static const NSInteger kAdMobFeedAdRow = 3;
 - (void)loadAd {
     [self.status show:@"Loading a banner through AdMob…"];
     [_bannerView loadRequest:[GADRequest request]];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [AotterTrekSDK notifyAdScrolled];   // Native Multimedia Ads that move with the page, also through the adapter
 }
 
 - (void)bannerViewDidReceiveAd:(GADBannerView *)bannerView {

@@ -1,11 +1,11 @@
 PODS:
-  - AotterTrekMediation (5.0.0):
-    - AotterTrekMediation/GoogleMobileAds (= 5.0.0)
-    - AotterTrekSDK (>= 5.0.0)
-  - AotterTrekMediation/GoogleMobileAds (5.0.0):
-    - AotterTrekSDK (>= 5.0.0)
+  - AotterTrekMediation (5.0.1):
+    - AotterTrekMediation/GoogleMobileAds (= 5.0.1)
+    - AotterTrekSDK (>= 5.0.1)
+  - AotterTrekMediation/GoogleMobileAds (5.0.1):
+    - AotterTrekSDK (>= 5.0.1)
     - Google-Mobile-Ads-SDK (< 14.0, >= 12.0)
-  - AotterTrekSDK (5.0.0)
+  - AotterTrekSDK (5.0.1)
   - Google-Mobile-Ads-SDK (13.11.0):
     - GoogleUserMessagingPlatform (>= 1.1)
   - GoogleUserMessagingPlatform (3.1.0)
@@ -18,14 +18,14 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/aotter/AotterTrekSpecs-iOS.git:
     - AotterTrekMediation
-  trunk:
     - AotterTrekSDK
+  trunk:
     - Google-Mobile-Ads-SDK
     - GoogleUserMessagingPlatform
 
 SPEC CHECKSUMS:
-  AotterTrekMediation: f5aa2ba82110b951188ac99a0af76ca0abca34fb
-  AotterTrekSDK: 52b7f4b01f584e47140df28254a8430994732135
+  AotterTrekMediation: a41ce1a618ed57dfbb3c8fbc078f6c9c9f389619
+  AotterTrekSDK: 2a67ce3d448cec17f1bed2b2e6a67c9de3da1fde
   Google-Mobile-Ads-SDK: 09d0868abe43b9f851b7b340a245679f0eafc96c
   GoogleUserMessagingPlatform: befe603da6501006420c206222acd449bba45a9c
 

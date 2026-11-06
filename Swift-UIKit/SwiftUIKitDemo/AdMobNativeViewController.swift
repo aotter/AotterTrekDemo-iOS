@@ -1,4 +1,5 @@
 import UIKit
+import AotterTrekSDK
 import GoogleMobileAds
 
 /// One native ad from an AdMob ad unit whose mediation group includes AotterTrek (custom event class
@@ -24,6 +25,10 @@ final class AdMobNativeViewController: StackPageViewController, NativeAdLoaderDe
         self.adLoader = adLoader
         status.show("Loading a native ad through AdMob…")
         adLoader.load(Request())
+    }
+
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        AotterTrekSDK.notifyAdScrolled()   // Native Multimedia Ads that move with the page, also through the adapter
     }
 
     // MARK: NativeAdLoaderDelegate

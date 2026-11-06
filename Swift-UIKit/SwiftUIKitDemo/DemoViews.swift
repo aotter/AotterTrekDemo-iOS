@@ -32,17 +32,14 @@ enum DemoText {
 }
 
 extension UIView {
-    /// Pins the view to every edge of `container`, inset by `inset`. A bottom priority below required lets the
-    /// container be shorter than the view (a table row that hides its ad).
-    func pin(to container: UIView, inset: CGFloat = 0, bottomPriority: UILayoutPriority = .required) {
+    /// Pins the view to every edge of `container`, inset by `inset`.
+    func pin(to container: UIView, inset: CGFloat = 0) {
         translatesAutoresizingMaskIntoConstraints = false
-        let bottom = bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -inset)
-        bottom.priority = bottomPriority
         NSLayoutConstraint.activate([
             topAnchor.constraint(equalTo: container.topAnchor, constant: inset),
             leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: inset),
             trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -inset),
-            bottom,
+            bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -inset),
         ])
     }
 }
@@ -82,6 +79,6 @@ class StackPageViewController: UIViewController, UIScrollViewDelegate {
         stack.addArrangedSubview(status)
     }
 
-    /// The AotterTrek pages tell their ad here that the page scrolled, for SuprAd creatives that follow the scroll.
+    /// The ad pages tell AotterTrekSDK here that the page scrolled, for Native Multimedia Ads that move with the page.
     func scrollViewDidScroll(_ scrollView: UIScrollView) {}
 }

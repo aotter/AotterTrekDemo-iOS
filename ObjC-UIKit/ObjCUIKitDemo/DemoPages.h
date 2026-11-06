@@ -9,11 +9,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface TrekNativeViewController : StackPageViewController
 @end
 
-/// A feed with two AotterTrek ad slots: a native placement and a SuprAd placement.
+/// A feed with two AotterTrek ad slots: a native placement and a Native Multimedia Ad placement.
 @interface TrekFeedViewController : UITableViewController
 @end
 
-/// An AotterTrek banner. The server decides its size.
+/// An AotterTrek banner, as wide as the page. The server decides its proportions.
 @interface TrekBannerViewController : StackPageViewController
 @end
 
@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AdMobNativeViewController : StackPageViewController
 @end
 
-/// A feed with one AdMob native ad slot.
+/// A feed with two AdMob ad slots: a native ad unit and a Native Multimedia Ad unit.
 @interface AdMobFeedViewController : UITableViewController
 @end
 

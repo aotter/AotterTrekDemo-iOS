@@ -182,7 +182,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_LDFLAGS = "$(inherited) -ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aotter.AotterTrekDemo.SwiftUI;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -258,7 +257,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_LDFLAGS = "$(inherited) -ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.aotter.AotterTrekDemo.SwiftUI;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -359,7 +357,7 @@
 			repositoryURL = "https://github.com/aotter/AotterTrekSDK-iOS";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
+				minimumVersion = 5.0.1;
 			};
 		};
 		968B782FE88D20441DBF8FEE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
@@ -375,7 +373,7 @@
 			repositoryURL = "https://github.com/aotter/AotterTrekMediation-iOS";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
+				minimumVersion = 5.0.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

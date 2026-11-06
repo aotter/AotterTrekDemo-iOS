@@ -8,8 +8,6 @@ struct TrekNativeAdSlot: UIViewControllerRepresentable {
     let placeID: String
     /// Change it to load a new ad.
     var reload = 0
-    /// Change it as the page scrolls, for SuprAd creatives that follow the scroll.
-    var scrolled = 0
     let status: StatusReporter
     @Binding var height: CGFloat
 
@@ -26,10 +24,6 @@ struct TrekNativeAdSlot: UIViewControllerRepresentable {
             context.coordinator.reload = reload
             host.loadAd()
         }
-        if context.coordinator.scrolled != scrolled {
-            context.coordinator.scrolled = scrolled
-            host.card.adView.notifyAdScrolled()
-        }
     }
 
     /// SwiftUI removed the slot: end its ad.
@@ -41,7 +35,6 @@ struct TrekNativeAdSlot: UIViewControllerRepresentable {
 
     final class Coordinator {
         var reload = 0
-        var scrolled = 0
     }
 }
 
@@ -107,13 +100,10 @@ final class TrekNativeAdHostController: AdHostViewController, ATKAdLoaderDelegat
     }
 }
 
-/// An AotterTrek banner. The server decides its size; a creative wider than the page is scaled down to fit, keeping
-/// its shape.
+/// An AotterTrek banner, as wide as the page. The server decides its proportions.
 struct TrekBannerSlot: UIViewControllerRepresentable {
     let placeID: String
     var reload = 0
-    /// Change it as the page scrolls, for SuprAd creatives that follow the scroll.
-    var scrolled = 0
     let status: StatusReporter
     @Binding var height: CGFloat
 
@@ -130,10 +120,6 @@ struct TrekBannerSlot: UIViewControllerRepresentable {
             context.coordinator.reload = reload
             host.loadAd()
         }
-        if context.coordinator.scrolled != scrolled {
-            context.coordinator.scrolled = scrolled
-            host.banner.notifyAdScrolled()
-        }
     }
 
     static func dismantleUIViewController(_ host: TrekBannerHostController, coordinator: Coordinator) {
@@ -144,15 +130,13 @@ struct TrekBannerSlot: UIViewControllerRepresentable {
 
     final class Coordinator {
         var reload = 0
-        var scrolled = 0
     }
 }
 
 final class TrekBannerHostController: AdHostViewController, ATKBannerAdDelegate {
     let banner = ATKBannerAdView()
     private let status: StatusReporter
-    private var bannerWidth: NSLayoutConstraint?
-    private var bannerHeight: NSLayoutConstraint?   // zero while the ad has no size, else the creative's aspect ratio
+    private var bannerHeight: NSLayoutConstraint?   // zero while the ad has no size, else the ad size's proportions
 
     init(placeID: String, status: StatusReporter) {
         self.status = status
@@ -168,14 +152,12 @@ final class TrekBannerHostController: AdHostViewController, ATKBannerAdDelegate 
         super.viewDidLoad()
         view.addSubview(banner)
         banner.translatesAutoresizingMaskIntoConstraints = false
-        bannerWidth = banner.widthAnchor.constraint(equalToConstant: 0)
-        bannerWidth?.priority = .defaultHigh
         bannerHeight = banner.heightAnchor.constraint(equalToConstant: 0)
         NSLayoutConstraint.activate([
             banner.topAnchor.constraint(equalTo: view.topAnchor),
-            banner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            banner.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor),
-            bannerWidth!, bannerHeight!,
+            banner.leadingAnchor.constraint(equalTo: view.leadingAnchor),   // as wide as the page's content
+            banner.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bannerHeight!,
         ])
         banner.rootViewController = self
         banner.delegate = self
@@ -188,9 +170,10 @@ final class TrekBannerHostController: AdHostViewController, ATKBannerAdDelegate 
         banner.load(nil)
     }
 
+    /// The server decides the ad size. The banner keeps the page's width and takes the ad size's proportions; the
+    /// creative fills it.
     func bannerAdView(_ bannerAdView: ATKBannerAdView, willChangeAdSizeTo adSize: CGSize) {
         let sized = adSize.width > 0 && adSize.height > 0   // with no size the banner folds away, as before the first ad
-        bannerWidth?.constant = sized ? adSize.width : 0
         bannerHeight?.isActive = false
         bannerHeight = sized
             ? banner.heightAnchor.constraint(equalTo: banner.widthAnchor, multiplier: adSize.height / adSize.width)

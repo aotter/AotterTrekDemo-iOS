@@ -14,6 +14,7 @@ final class TrekNativeAdCard: UIView {
     private let bodyLabel = UILabel()
     private let callToActionButton = UIButton(type: .system)
     private var mediaHeight: NSLayoutConstraint?
+    private var sponsorWidth: NSLayoutConstraint?   // the label's own width: a long title gives way to it
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,14 +35,12 @@ final class TrekNativeAdCard: UIView {
         sponsorBadge.textAlignment = .center
         sponsorBadge.textColor = .white
         sponsorBadge.backgroundColor = UIColor(red: 0xC9 / 255.0, green: 0x34 / 255.0, blue: 0, alpha: 1)   // white text reads at 5.3:1
-        // The label keeps its own width: a long title gives way to it.
-        sponsorBadge.setContentHuggingPriority(UILayoutPriority(999), for: .horizontal)
-        sponsorBadge.setContentCompressionResistancePriority(UILayoutPriority(999), for: .horizontal)
         sponsorBadge.layer.cornerRadius = 3
         sponsorBadge.clipsToBounds = true
         bodyLabel.font = .preferredFont(forTextStyle: .subheadline)
         bodyLabel.numberOfLines = 3
         callToActionButton.configuration = .filled()
+        callToActionButton.isUserInteractionEnabled = false   // so the tap reaches adView, for every ad type
 
         let titles = UIStackView(arrangedSubviews: [titleLabel, advertiserLabel])
         titles.axis = .vertical
@@ -57,7 +56,6 @@ final class TrekNativeAdCard: UIView {
         NSLayoutConstraint.activate([
             iconView.widthAnchor.constraint(equalToConstant: 40),
             iconView.heightAnchor.constraint(equalToConstant: 40),
-            sponsorBadge.widthAnchor.constraint(greaterThanOrEqualToConstant: 15),
             sponsorBadge.heightAnchor.constraint(greaterThanOrEqualToConstant: 15),
         ])
 
@@ -73,6 +71,9 @@ final class TrekNativeAdCard: UIView {
         titleLabel.text = ad.title
         advertiserLabel.text = ad.advertiserName
         sponsorBadge.text = " \(ad.sponsor.isEmpty ? "Sponsored" : ad.sponsor) "
+        sponsorWidth?.isActive = false
+        sponsorWidth = sponsorBadge.widthAnchor.constraint(equalToConstant: max(15, ceil(sponsorBadge.intrinsicContentSize.width)))
+        sponsorWidth?.isActive = true
         bodyLabel.text = ad.text
         callToActionButton.setTitle(ad.callToAction.isEmpty ? "Learn more" : ad.callToAction, for: .normal)
         loadIcon(from: ad.imgIconHd.isEmpty ? ad.imgIcon : ad.imgIconHd)
@@ -89,7 +90,7 @@ final class TrekNativeAdCard: UIView {
 
     private func loadIcon(from urlString: String) {
         iconView.image = nil
-        iconView.isHidden = urlString.isEmpty   // a SuprAd can come without an icon
+        iconView.isHidden = urlString.isEmpty   // a Native Multimedia Ad can come without an icon
         guard let url = URL(string: urlString) else { return }
         URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
             guard let data, let image = UIImage(data: data) else { return }

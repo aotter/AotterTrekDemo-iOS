@@ -34,18 +34,14 @@ a newer release.
 
 To run on a device, set your own team and bundle identifier under Signing & Capabilities.
 
-With AotterTrekSDK 5.0.0 from Swift Package Manager (or added by hand), the app target has to link with `-ObjC`
-(Build Settings > Other Linker Flags): part of the SDK is Objective-C categories, which a static link leaves out
-otherwise, and the app stops when it shows an ad. The SwiftUI project sets it. CocoaPods adds the flag for you.
-
 ## What the pages show
 
 | Page | Shows |
 |---|---|
 | AotterTrek / Native ad | `ATKAdLoader` loads one ad; `ATKNativeAdView` with an `ATKMediaView` shows it between paragraphs |
-| AotterTrek / Native ads in a feed | Two ad slots in a list, a native placement and a SuprAd placement, shown by the same code |
-| AotterTrek / Banner ad | `ATKBannerAdView`, sized by the server |
-| AdMob mediation / Native ad, feed, banner | The same through Google Mobile Ads, with AotterTrek in the ad unit's mediation group; the feed has one native slot |
+| AotterTrek / Native ads in a feed | Two ad slots in a list, a native placement and a Native Multimedia Ad placement, shown by the same code |
+| AotterTrek / Banner ad | `ATKBannerAdView`, as wide as the page and in the proportions of the ad size the server sends |
+| AdMob mediation / Native ad, feed, banner | The same through Google Mobile Ads, with AotterTrek in the ad unit's mediation group; the feed's two slots come from a native ad unit and a Native Multimedia Ad unit |
 | Tracker | `ATKTracker` reports what the user does: one tracker per report, sent with `send`, which does not report its result back |
 
 Every page has a status line at the top that says what the ad did last; the same line goes to the console.
@@ -53,12 +49,17 @@ Every page has a status line at the top that says what the ad did last; the same
 A few rules the code follows, from the [SDK README](https://github.com/aotter/AotterTrekSDK-iOS) and the
 [integration guide](https://aotter.gitbook.io/ios):
 
-- One ad, one view. Binding an ad into a second view moves it there, and a SuprAd that has started does not survive
-  the move. In a UIKit feed each ad slot keeps a cell of its own, so a reused cell never takes an ad from another row.
-  The SwiftUI AotterTrek feed puts its slots in a `VStack`, where each slot keeps its place; a `List` recycles its rows.
-  A `VStack` builds every row at once, and that page redraws as it scrolls because it counts the scrolling for SuprAd
-  creatives. Both suit this short feed; a long feed needs a lazy container and its own way to keep each slot's ad.
+- One ad, one view. Binding an ad into a second view moves it there, and a Native Multimedia Ad that has started does
+  not survive the move. In a UIKit feed each ad slot keeps a cell of its own, so a reused cell never takes an ad from
+  another row, and the slot's row joins the table only when its ad arrives. The SwiftUI feeds put their slots in a
+  `VStack`, where each slot keeps its place; a `List` recycles its rows. A `VStack` builds every row at once, which
+  suits this short feed; a long feed needs a lazy container and its own way to keep each slot's ad.
 - `rootViewController` is always set: videos, popups and the in-app browser present from it.
+- Every ad page calls `AotterTrekSDK.notifyAdScrolled()` as it scrolls, from `scrollViewDidScroll(_:)` (in SwiftUI,
+  when the content's offset changes), so Native Multimedia Ads that move with the page follow it. One call reaches
+  every ad on screen, the ones shown through AdMob included.
+- The AotterTrek card's call-to-action button does not take taps (`isUserInteractionEnabled = false`), so a tap on it
+  reaches the ad view for every ad type: a Native Multimedia Ad does not register the button.
 - `ATKMediaView` has no intrinsic size; the card gives it the ad's aspect ratio.
 - Each native card labels its ad. The AotterTrek card shows `sponsor`, the label text the server sends (such as
   "Sponsored"), or "Sponsored" when it is empty; the integration guide requires native ads to display it. The AdMob
@@ -75,11 +76,12 @@ A few rules the code follows, from the [SDK README](https://github.com/aotter/Ao
 
 - **AotterTrek**: the public test client and placements from the AotterTrek docs. They serve test ads. Replace them
   with your own before you ship.
-- **AdMob**: Google's sample app ID and demo ad units. They always serve Google's own test ads, so with them the
-  AdMob pages never reach the AotterTrek adapter. To see AotterTrek ads through AdMob, copy `Local.xcconfig.example`
-  to `Local.xcconfig` (git ignores it) and put in your own AdMob app ID and ad units. In the AdMob console, add a
-  custom event to each ad unit's mediation group, pointing the native ad unit at a native or SuprAd placement and
-  the banner ad unit at a banner placement:
+- **AdMob**: Google's sample app ID and demo ad units, Native Video for the Native Multimedia Ad unit. They always
+  serve Google's own test ads, so with them the AdMob pages never reach the AotterTrek adapter. To see AotterTrek ads
+  through AdMob, copy `Local.xcconfig.example` to `Local.xcconfig` (git ignores it) and put in your own AdMob app ID
+  and ad units. In the AdMob console, add a custom event to each ad unit's mediation group, pointing the native ad
+  unit at a native placement, the Native Multimedia Ad unit at a Native Multimedia Ad placement, and the banner ad
+  unit at a banner placement:
 
   | Field | Value |
   |---|---|
@@ -98,8 +100,8 @@ A few rules the code follows, from the [SDK README](https://github.com/aotter/Ao
   custom event and the client your app starts the SDK with to your own, together. From then on the ads AotterTrek
   fills are live, so do not tap them yourself.
 
-  Through AdMob, SuprAd creatives that follow the scroll do not get the page's scrolling: the adapter has no way to
-  pass it on.
+  Through AdMob, Native Multimedia Ads that move with the page follow the scrolling too: the `notifyAdScrolled()` call
+  each page makes reaches the ads the adapter shows.
 
 ## About the Podfiles
 

@@ -4,9 +4,10 @@ import Foundation
 enum DemoConfig {
     static let clientID = value("AotterTrekClientID")
     static let nativePlaceID = value("AotterTrekNativePlaceID")
-    static let suprAdPlaceID = value("AotterTrekSuprAdPlaceID")
+    static let nativeMultimediaPlaceID = value("AotterTrekNativeMultimediaPlaceID")
     static let bannerPlaceID = value("AotterTrekBannerPlaceID")
     static let adMobNativeAdUnitID = value("AdMobNativeAdUnitID")
+    static let adMobNativeMultimediaAdUnitID = value("AdMobNativeMultimediaAdUnitID")
     static let adMobBannerAdUnitID = value("AdMobBannerAdUnitID")
 
     private static func value(_ key: String) -> String {

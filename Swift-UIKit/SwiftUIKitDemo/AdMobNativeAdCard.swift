@@ -14,6 +14,8 @@ final class AdMobNativeAdCard: UIView {
     private let bodyLabel = UILabel()
     private let callToActionButton = UIButton(type: .system)
     private var mediaHeight: NSLayoutConstraint?
+    private var badgeWidth: NSLayoutConstraint?   // the label's own width: a long title gives way to it
+    private var filledAd: NativeAd?   // the ad the assets are filled from; the view registers it later
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,9 +29,6 @@ final class AdMobNativeAdCard: UIView {
         badge.textAlignment = .center
         badge.textColor = .white
         badge.backgroundColor = UIColor(red: 0xC9 / 255.0, green: 0x34 / 255.0, blue: 0, alpha: 1)   // white text reads at 5.3:1
-        // The label keeps its own width: a long title gives way to it.
-        badge.setContentHuggingPriority(UILayoutPriority(999), for: .horizontal)
-        badge.setContentCompressionResistancePriority(UILayoutPriority(999), for: .horizontal)
         badge.layer.cornerRadius = 3
         badge.clipsToBounds = true
         iconView.contentMode = .scaleAspectFit
@@ -56,7 +55,6 @@ final class AdMobNativeAdCard: UIView {
         NSLayoutConstraint.activate([
             iconView.widthAnchor.constraint(equalToConstant: 40),
             iconView.heightAnchor.constraint(equalToConstant: 40),
-            badge.widthAnchor.constraint(greaterThanOrEqualToConstant: 15),   // Google's minimum for the label
             badge.heightAnchor.constraint(greaterThanOrEqualToConstant: 15),
         ])
 
@@ -72,10 +70,20 @@ final class AdMobNativeAdCard: UIView {
 
     /// Fills in the assets, then hands the ad to the NativeAdView, which registers it.
     func show(_ nativeAd: NativeAd) {
+        fill(nativeAd)
+        register(nativeAd)
+    }
+
+    /// Fills in the assets. Call register(_:) once the card is laid out at its size.
+    func fill(_ nativeAd: NativeAd) {
+        filledAd = nativeAd
         headlineLabel.text = nativeAd.headline
         advertiserLabel.text = nativeAd.advertiser
         bodyLabel.text = nativeAd.body
         badge.text = " \(Self.label(for: nativeAd)) "
+        badgeWidth?.isActive = false   // at least Google's minimum of 15
+        badgeWidth = badge.widthAnchor.constraint(equalToConstant: max(15, ceil(badge.intrinsicContentSize.width)))
+        badgeWidth?.isActive = true
         callToActionButton.setTitle(nativeAd.callToAction, for: .normal)
         callToActionButton.isHidden = nativeAd.callToAction?.isEmpty ?? true
         iconView.image = nativeAd.icon?.image
@@ -87,8 +95,11 @@ final class AdMobNativeAdCard: UIView {
         mediaHeight = mediaView.heightAnchor.constraint(equalTo: mediaView.widthAnchor, multiplier: 1 / ratio)
         mediaHeight?.isActive = true
         mediaView.mediaContent = nativeAd.mediaContent
+    }
 
-        // Last, after the asset views are set and laid out: Google Mobile Ads checks their sizes when the ad is registered.
+    /// Hands the ad to the NativeAdView, which registers it. Last, after the asset views are set and laid out: Google
+    /// Mobile Ads checks their sizes when the ad is registered.
+    func register(_ nativeAd: NativeAd) {
         layoutIfNeeded()
         nativeAdView.nativeAd = nativeAd
     }
@@ -98,7 +109,7 @@ final class AdMobNativeAdCard: UIView {
         URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
             guard let data, let image = UIImage(data: data) else { return }
             DispatchQueue.main.async {
-                guard let self, self.nativeAdView.nativeAd === nativeAd else { return }   // still the ad this icon belongs to
+                guard let self, self.filledAd === nativeAd else { return }   // still the ad this icon belongs to
                 self.iconView.image = image
             }
         }.resume()

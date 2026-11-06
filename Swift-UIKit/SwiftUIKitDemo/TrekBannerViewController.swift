@@ -1,31 +1,19 @@
 import UIKit
 import AotterTrekSDK
 
-/// An AotterTrek banner. The server decides its size.
+/// An AotterTrek banner, as wide as the page. The server decides its proportions.
 final class TrekBannerViewController: StackPageViewController, ATKBannerAdDelegate {
 
     private let banner = ATKBannerAdView()
-    private var bannerWidth: NSLayoutConstraint?
-    private var bannerHeight: NSLayoutConstraint?   // zero while the ad has no size, else the creative's aspect ratio
+    private var bannerHeight: NSLayoutConstraint?   // zero while the ad has no size, else the ad size's proportions
 
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Reload", style: .plain, target: self, action: #selector(loadAd))
-        let slot = UIView()   // centres the banner across the page
-        slot.addSubview(banner)
-        banner.translatesAutoresizingMaskIntoConstraints = false
-        bannerWidth = banner.widthAnchor.constraint(equalToConstant: 0)
-        bannerWidth?.priority = .defaultHigh   // set before activating: an installed constraint cannot change to or from required
         bannerHeight = banner.heightAnchor.constraint(equalToConstant: 0)
-        NSLayoutConstraint.activate([
-            banner.topAnchor.constraint(equalTo: slot.topAnchor),
-            banner.bottomAnchor.constraint(equalTo: slot.bottomAnchor),
-            banner.centerXAnchor.constraint(equalTo: slot.centerXAnchor),
-            banner.widthAnchor.constraint(lessThanOrEqualTo: slot.widthAnchor),
-            bannerWidth!, bannerHeight!,
-        ])
+        bannerHeight?.isActive = true
         stack.addArrangedSubview(DemoText.paragraph(1))
-        stack.addArrangedSubview(slot)
+        stack.addArrangedSubview(banner)   // as wide as the page's content
         stack.addArrangedSubview(DemoText.paragraph(2))
 
         banner.placeID = DemoConfig.bannerPlaceID
@@ -46,15 +34,15 @@ final class TrekBannerViewController: StackPageViewController, ATKBannerAdDelega
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        banner.notifyAdScrolled()   // SuprAd creatives that follow the scroll
+        AotterTrekSDK.notifyAdScrolled()   // Native Multimedia Ads that move with the page
     }
 
     // MARK: ATKBannerAdDelegate
 
-    /// The size the creative was built for. A creative wider than the page is scaled down to fit, keeping its shape.
+    /// The server decides the ad size. The banner keeps the page's width and takes the ad size's proportions; the
+    /// creative fills it.
     func bannerAdView(_ bannerAdView: ATKBannerAdView, willChangeAdSizeTo adSize: CGSize) {
         let sized = adSize.width > 0 && adSize.height > 0   // with no size the banner folds away, as before the first ad
-        bannerWidth?.constant = sized ? adSize.width : 0
         bannerHeight?.isActive = false
         bannerHeight = sized
             ? banner.heightAnchor.constraint(equalTo: banner.widthAnchor, multiplier: adSize.height / adSize.width)

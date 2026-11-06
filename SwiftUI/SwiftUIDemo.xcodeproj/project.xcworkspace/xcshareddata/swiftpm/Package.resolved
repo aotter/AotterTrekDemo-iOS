@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/aotter/AotterTrekMediation-iOS",
       "state" : {
-        "revision" : "03b8a4fedee8296c7b56f99b3d61204d72ee0074",
-        "version" : "5.0.0"
+        "revision" : "805a9eb57028b85cf01de4d96bf7d042c57cded8",
+        "version" : "5.0.1"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/aotter/AotterTrekSDK-iOS",
       "state" : {
-        "revision" : "f64ac8a9842ebbf751f0aeb61e0fc7b8e0232aa0",
-        "version" : "5.0.0"
+        "revision" : "b8dd9a18bb02a1f6d2784b13a6a6cfd30dfc9ec2",
+        "version" : "5.0.1"
       }
     },
     {

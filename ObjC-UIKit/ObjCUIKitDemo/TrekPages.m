@@ -37,7 +37,7 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    [_card.adView notifyAdScrolled];   // SuprAd creatives that follow the scroll
+    [AotterTrekSDK notifyAdScrolled];   // Native Multimedia Ads that move with the page
 }
 
 - (void)adLoader:(ATKAdLoader *)adLoader didReceiveAd:(ATKNativeAdData *)ad {
@@ -65,7 +65,7 @@
 #pragma mark - Native ads in a feed
 
 /// One ad slot. It keeps its own cell, so the table never hands the ad to another row: a second bind moves the ad,
-/// and a SuprAd that has started does not survive the move.
+/// and a Native Multimedia Ad that has started does not survive the move.
 @interface TrekAdSlot : NSObject
 @property (nonatomic, readonly) NSInteger row;
 @property (nonatomic, readonly) NSString *placeID;
@@ -84,8 +84,7 @@
     _cell = [[UITableViewCell alloc] init];
     _cell.selectionStyle = UITableViewCellSelectionStyleNone;
     [_cell.contentView addSubview:_card];
-    DemoPinInRow(_card, _cell.contentView, 12);   // the row collapses while the card is hidden
-    _card.hidden = YES;
+    DemoPin(_card, _cell.contentView, 12);
     return self;
 }
 
@@ -97,9 +96,15 @@
 @implementation TrekFeedViewController {
     StatusLabel *_status;
     NSArray<TrekAdSlot *> *_slots;
+    NSMutableArray *_rows;   // the rows on screen: a post's number (NSNumber), and a slot once its ad has arrived
 }
 
 static const NSInteger kTrekFeedPostCount = 20;
+
+/// A row's number in the full feed.
+static NSInteger TrekFeedRowNumber(id row) {
+    return [row isKindOfClass:TrekAdSlot.class] ? ((TrekAdSlot *)row).row : [row integerValue];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -108,8 +113,14 @@ static const NSInteger kTrekFeedPostCount = 20;
     self.tableView.tableHeaderView = _status;
     _slots = @[
         [[TrekAdSlot alloc] initWithRow:3 placeID:DemoConfig.nativePlaceID],
-        [[TrekAdSlot alloc] initWithRow:10 placeID:DemoConfig.suprAdPlaceID],
+        [[TrekAdSlot alloc] initWithRow:10 placeID:DemoConfig.nativeMultimediaPlaceID],
     ];
+    _rows = [NSMutableArray array];
+    for (NSInteger number = 0; number < kTrekFeedPostCount + (NSInteger)_slots.count; number++) {
+        BOOL isSlot = NO;
+        for (TrekAdSlot *slot in _slots) if (slot.row == number) isSlot = YES;
+        if (!isSlot) [_rows addObject:@(number)];
+    }
     for (TrekAdSlot *slot in _slots) [self load:slot];
 }
 
@@ -135,8 +146,11 @@ static const NSInteger kTrekFeedPostCount = 20;
     TrekAdSlot *slot = [self slotForLoader:adLoader];
     if (!slot) { [ad destroy]; return; }
     [slot.card showAd:ad fromViewController:self];
-    slot.card.hidden = NO;
-    [self.tableView performBatchUpdates:nil completion:nil];   // the slot's row grows to fit the ad
+    NSUInteger index = _rows.count;
+    for (NSUInteger i = 0; i < _rows.count; i++) if (TrekFeedRowNumber(_rows[i]) > slot.row) { index = i; break; }
+    [_rows insertObject:slot atIndex:index];
+    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]]
+                          withRowAnimation:UITableViewRowAnimationNone];   // the row comes in at the height of its ad
     [_status show:[NSString stringWithFormat:@"Ad received for row %ld: %@", (long)slot.row, ad.title]];
 }
 
@@ -147,24 +161,19 @@ static const NSInteger kTrekFeedPostCount = 20;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return kTrekFeedPostCount + _slots.count;
+    return _rows.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    for (TrekAdSlot *slot in _slots) if (slot.row == indexPath.row) return slot.cell;
+    id row = _rows[indexPath.row];
+    if ([row isKindOfClass:TrekAdSlot.class]) return ((TrekAdSlot *)row).cell;
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Post" forIndexPath:indexPath];
-    cell.textLabel.text = [NSString stringWithFormat:@"Post %ld", (long)indexPath.row];
+    cell.textLabel.text = [NSString stringWithFormat:@"Post %ld", (long)TrekFeedRowNumber(row)];
     return cell;
 }
 
-/// An ad row has no height until its ad arrives, or at all when there is no ad.
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    for (TrekAdSlot *slot in _slots) if (slot.row == indexPath.row && slot.card.hidden) return 0;
-    return UITableViewAutomaticDimension;
-}
-
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    for (TrekAdSlot *slot in _slots) [slot.card.adView notifyAdScrolled];   // SuprAd creatives that follow the scroll
+    [AotterTrekSDK notifyAdScrolled];   // Native Multimedia Ads that move with the page
 }
 
 @end
@@ -176,30 +185,18 @@ static const NSInteger kTrekFeedPostCount = 20;
 
 @implementation TrekBannerViewController {
     ATKBannerAdView *_banner;
-    NSLayoutConstraint *_bannerWidth;
-    NSLayoutConstraint *_bannerHeight;   // zero while the ad has no size, else the creative's aspect ratio
+    NSLayoutConstraint *_bannerHeight;   // zero while the ad has no size, else the ad size's proportions
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Reload" style:UIBarButtonItemStylePlain
                                                                              target:self action:@selector(loadAd)];
-    UIView *slot = [[UIView alloc] init];   // centres the banner across the page
     _banner = [[ATKBannerAdView alloc] init];
-    [slot addSubview:_banner];
-    _banner.translatesAutoresizingMaskIntoConstraints = NO;
-    _bannerWidth = [_banner.widthAnchor constraintEqualToConstant:0];
-    _bannerWidth.priority = UILayoutPriorityDefaultHigh;
     _bannerHeight = [_banner.heightAnchor constraintEqualToConstant:0];
-    [NSLayoutConstraint activateConstraints:@[
-        [_banner.topAnchor constraintEqualToAnchor:slot.topAnchor],
-        [_banner.bottomAnchor constraintEqualToAnchor:slot.bottomAnchor],
-        [_banner.centerXAnchor constraintEqualToAnchor:slot.centerXAnchor],
-        [_banner.widthAnchor constraintLessThanOrEqualToAnchor:slot.widthAnchor],
-        _bannerWidth, _bannerHeight,
-    ]];
+    _bannerHeight.active = YES;
     [self.stack addArrangedSubview:DemoParagraph(1)];
-    [self.stack addArrangedSubview:slot];
+    [self.stack addArrangedSubview:_banner];   // as wide as the page's content
     [self.stack addArrangedSubview:DemoParagraph(2)];
 
     _banner.placeID = DemoConfig.bannerPlaceID;
@@ -220,13 +217,13 @@ static const NSInteger kTrekFeedPostCount = 20;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    [_banner notifyAdScrolled];   // SuprAd creatives that follow the scroll
+    [AotterTrekSDK notifyAdScrolled];   // Native Multimedia Ads that move with the page
 }
 
-/// The size the creative was built for. A creative wider than the page is scaled down to fit, keeping its shape.
+/// The server decides the ad size. The banner keeps the page's width and takes the ad size's proportions; the creative
+/// fills it.
 - (void)bannerAdView:(ATKBannerAdView *)bannerAdView willChangeAdSizeTo:(CGSize)adSize {
     BOOL sized = adSize.width > 0 && adSize.height > 0;   // with no size the banner folds away, as before the first ad
-    _bannerWidth.constant = sized ? adSize.width : 0;
     _bannerHeight.active = NO;
     _bannerHeight = sized ? [_banner.heightAnchor constraintEqualToAnchor:_banner.widthAnchor multiplier:adSize.height / adSize.width]
                           : [_banner.heightAnchor constraintEqualToConstant:0];

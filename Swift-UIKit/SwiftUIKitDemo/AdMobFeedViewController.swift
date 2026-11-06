@@ -1,46 +1,73 @@
 import UIKit
+import AotterTrekSDK
 import GoogleMobileAds
 
-/// A feed with one AdMob native ad slot.
+/// A feed with two AdMob ad slots: a native ad unit and a Native Multimedia Ad unit.
 final class AdMobFeedViewController: UITableViewController, NativeAdLoaderDelegate, NativeAdDelegate {
+
+    /// One ad slot. It keeps its own cell, so the table never hands the ad to another row.
+    private final class AdSlot {
+        let row: Int
+        let adUnitID: String
+        let card = AdMobNativeAdCard()
+        let cell = UITableViewCell()
+        var adLoader: AdLoader?
+
+        init(row: Int, adUnitID: String) {
+            self.row = row
+            self.adUnitID = adUnitID
+            cell.selectionStyle = .none
+            cell.contentView.addSubview(card)
+            card.pin(to: cell.contentView, inset: 12)
+        }
+    }
 
     private let status = StatusLabel()
     private let postCount = 20
-    private let adRow = 3
-    /// The ad row keeps its own cell, so the table never hands the ad to another row.
-    private let adCell = UITableViewCell()
-    private let card = AdMobNativeAdCard()
-    private var adLoader: AdLoader?
+    private let slots = [   // one ad unit per AotterTrek placement type
+        AdSlot(row: 3, adUnitID: DemoConfig.adMobNativeAdUnitID),
+        AdSlot(row: 10, adUnitID: DemoConfig.adMobNativeMultimediaAdUnitID),
+    ]
+    /// The rows on screen, by their number in the full feed: the posts, and a slot's row once its ad has arrived.
+    private lazy var rows: [(number: Int, slot: AdSlot?)] =
+        (0..<postCount + slots.count).filter { number in !slots.contains { $0.row == number } }.map { ($0, nil) }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Post")
         status.frame.size.height = 44
         tableView.tableHeaderView = status
-        adCell.selectionStyle = .none
-        adCell.contentView.addSubview(card)
-        card.pin(to: adCell.contentView, inset: 12, bottomPriority: .defaultHigh)   // the row collapses while the card is hidden
-        card.isHidden = true
+        slots.forEach(load)
+    }
 
-        let adLoader = AdLoader(adUnitID: DemoConfig.adMobNativeAdUnitID, rootViewController: self, adTypes: [.native], options: nil)
+    private func load(_ slot: AdSlot) {
+        let adLoader = AdLoader(adUnitID: slot.adUnitID, rootViewController: self, adTypes: [.native], options: nil)
         adLoader.delegate = self
-        self.adLoader = adLoader
-        status.show("Loading a native ad through AdMob…")
+        slot.adLoader = adLoader
+        status.show("Loading ads through AdMob…")
         adLoader.load(Request())
+    }
+
+    private func slot(for adLoader: AdLoader) -> AdSlot? {
+        slots.first { $0.adLoader === adLoader }
     }
 
     // MARK: NativeAdLoaderDelegate
 
     func adLoader(_ adLoader: AdLoader, didReceive nativeAd: NativeAd) {
+        guard let slot = slot(for: adLoader) else { return }
         nativeAd.delegate = self
-        card.isHidden = false   // before show, which registers the ad with the card's views at their size
-        card.show(nativeAd)
-        tableView.performBatchUpdates(nil)   // the ad row grows to fit the ad
-        status.show("AdMob native ad received from \(AdMobResponse.network(of: nativeAd.responseInfo))")
+        slot.card.fill(nativeAd)
+        let index = rows.firstIndex { $0.number > slot.row } ?? rows.count
+        rows.insert((slot.row, slot), at: index)
+        tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .none)   // the row comes in at the height of its ad
+        DispatchQueue.main.async { slot.card.register(nativeAd) }   // once the row has laid the card out at its size
+        status.show("AdMob native ad received for row \(slot.row) from \(AdMobResponse.network(of: nativeAd.responseInfo))")
     }
 
     func adLoader(_ adLoader: AdLoader, didFailToReceiveAdWithError error: Error) {
-        status.show("No AdMob native ad: \(error.localizedDescription)")
+        guard let slot = slot(for: adLoader) else { return }
+        status.show("No AdMob native ad for row \(slot.row): \(error.localizedDescription)")
     }
 
     // MARK: NativeAdDelegate
@@ -55,17 +82,21 @@ final class AdMobFeedViewController: UITableViewController, NativeAdLoaderDelega
 
     // MARK: table
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { postCount + 1 }
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        rows.count
+    }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row == adRow { return adCell }
+        let row = rows[indexPath.row]
+        if let slot = row.slot {
+            return slot.cell
+        }
         let cell = tableView.dequeueReusableCell(withIdentifier: "Post", for: indexPath)
-        cell.textLabel?.text = "Post \(indexPath.row)"
+        cell.textLabel?.text = "Post \(row.number)"
         return cell
     }
 
-    /// The ad row has no height until its ad arrives, or at all when there is no ad.
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        indexPath.row == adRow && card.isHidden ? 0 : UITableView.automaticDimension
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        AotterTrekSDK.notifyAdScrolled()   // Native Multimedia Ads that move with the page, also through the adapter
     }
 }

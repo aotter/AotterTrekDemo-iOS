@@ -1,4 +1,5 @@
 import UIKit
+import AotterTrekSDK
 import GoogleMobileAds
 
 /// A banner from an AdMob ad unit whose mediation group includes AotterTrek.
@@ -34,6 +35,10 @@ final class AdMobBannerViewController: StackPageViewController, BannerViewDelega
     @objc private func loadAd() {
         status.show("Loading a banner through AdMob…")
         bannerView?.load(Request())
+    }
+
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        AotterTrekSDK.notifyAdScrolled()   // Native Multimedia Ads that move with the page, also through the adapter
     }
 
     // MARK: BannerViewDelegate

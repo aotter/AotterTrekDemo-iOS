@@ -33,7 +33,7 @@ final class TrekNativeViewController: StackPageViewController, ATKAdLoaderDelega
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        card.adView.notifyAdScrolled()   // SuprAd creatives that follow the scroll
+        AotterTrekSDK.notifyAdScrolled()   // Native Multimedia Ads that move with the page
     }
 
     // MARK: ATKAdLoaderDelegate

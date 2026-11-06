@@ -10,6 +10,8 @@
     UILabel *_bodyLabel;
     UIButton *_callToActionButton;
     NSLayoutConstraint *_mediaHeight;
+    NSLayoutConstraint *_badgeWidth;   // the label's own width: a long title gives way to it
+    GADNativeAd *_filledAd;   // the ad the assets are filled from; the view registers it later
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -26,9 +28,6 @@
     _badge.textAlignment = NSTextAlignmentCenter;
     _badge.textColor = UIColor.whiteColor;
     _badge.backgroundColor = [UIColor colorWithRed:0xC9 / 255.0 green:0x34 / 255.0 blue:0 alpha:1];   // white text reads at 5.3:1
-    // The label keeps its own width: a long title gives way to it.
-    [_badge setContentHuggingPriority:UILayoutPriorityRequired - 1 forAxis:UILayoutConstraintAxisHorizontal];
-    [_badge setContentCompressionResistancePriority:UILayoutPriorityRequired - 1 forAxis:UILayoutConstraintAxisHorizontal];
     _badge.layer.cornerRadius = 3;
     _badge.clipsToBounds = YES;
     _mediaView = [[GADMediaView alloc] init];
@@ -60,7 +59,6 @@
     [NSLayoutConstraint activateConstraints:@[
         [_iconView.widthAnchor constraintEqualToConstant:40],
         [_iconView.heightAnchor constraintEqualToConstant:40],
-        [_badge.widthAnchor constraintGreaterThanOrEqualToConstant:15],   // Google's minimum for the label
         [_badge.heightAnchor constraintGreaterThanOrEqualToConstant:15],
     ]];
 
@@ -74,10 +72,19 @@
 }
 
 - (void)showAd:(GADNativeAd *)nativeAd {
+    [self fillAd:nativeAd];
+    [self registerAd:nativeAd];
+}
+
+- (void)fillAd:(GADNativeAd *)nativeAd {
+    _filledAd = nativeAd;
     _headlineLabel.text = nativeAd.headline;
     _advertiserLabel.text = nativeAd.advertiser;
     _bodyLabel.text = nativeAd.body;
     _badge.text = [NSString stringWithFormat:@" %@ ", [AdMobNativeAdCard labelForAd:nativeAd]];
+    _badgeWidth.active = NO;   // at least Google's minimum of 15
+    _badgeWidth = [_badge.widthAnchor constraintEqualToConstant:MAX(15, ceil(_badge.intrinsicContentSize.width))];
+    _badgeWidth.active = YES;
     [_callToActionButton setTitle:nativeAd.callToAction forState:UIControlStateNormal];
     _callToActionButton.hidden = nativeAd.callToAction.length == 0;
     _iconView.image = nativeAd.icon.image;
@@ -89,7 +96,9 @@
     _mediaHeight = [_mediaView.heightAnchor constraintEqualToAnchor:_mediaView.widthAnchor multiplier:1 / ratio];
     _mediaHeight.active = YES;
     _mediaView.mediaContent = nativeAd.mediaContent;
+}
 
+- (void)registerAd:(GADNativeAd *)nativeAd {
     // Last, after the asset views are set and laid out: Google Mobile Ads checks their sizes when the ad is registered.
     [self layoutIfNeeded];
     _nativeAdView.nativeAd = nativeAd;
@@ -103,7 +112,7 @@
         if (!image) return;
         dispatch_async(dispatch_get_main_queue(), ^{
             AdMobNativeAdCard *card = weakSelf;
-            if (!card || card->_nativeAdView.nativeAd != nativeAd) return;   // still the ad this icon belongs to
+            if (!card || card->_filledAd != nativeAd) return;   // still the ad this icon belongs to
             card->_iconView.image = image;
         });
     }] resume];

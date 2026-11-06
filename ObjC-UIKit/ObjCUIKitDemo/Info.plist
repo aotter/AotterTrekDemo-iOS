@@ -6,14 +6,16 @@
 	<string>$(ADMOB_BANNER_AD_UNIT_ID)</string>
 	<key>AdMobNativeAdUnitID</key>
 	<string>$(ADMOB_NATIVE_AD_UNIT_ID)</string>
+	<key>AdMobNativeMultimediaAdUnitID</key>
+	<string>$(ADMOB_NATIVE_MULTIMEDIA_AD_UNIT_ID)</string>
 	<key>AotterTrekBannerPlaceID</key>
 	<string>$(AOTTERTREK_BANNER_PLACE_ID)</string>
 	<key>AotterTrekClientID</key>
 	<string>$(AOTTERTREK_CLIENT_ID)</string>
+	<key>AotterTrekNativeMultimediaPlaceID</key>
+	<string>$(AOTTERTREK_NATIVE_MULTIMEDIA_PLACE_ID)</string>
 	<key>AotterTrekNativePlaceID</key>
 	<string>$(AOTTERTREK_NATIVE_PLACE_ID)</string>
-	<key>AotterTrekSuprAdPlaceID</key>
-	<string>$(AOTTERTREK_SUPRAD_PLACE_ID)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

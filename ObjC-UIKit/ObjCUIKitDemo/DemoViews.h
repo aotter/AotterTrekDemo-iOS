@@ -8,9 +8,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DemoConfig : NSObject
 + (NSString *)clientID;
 + (NSString *)nativePlaceID;
-+ (NSString *)suprAdPlaceID;
++ (NSString *)nativeMultimediaPlaceID;
 + (NSString *)bannerPlaceID;
 + (NSString *)adMobNativeAdUnitID;
++ (NSString *)adMobNativeMultimediaAdUnitID;
 + (NSString *)adMobBannerAdUnitID;
 @end
 
@@ -19,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)show:(NSString *)message;
 @end
 
-/// A scrolling page that stacks views vertically, with a status line on top. The AotterTrek pages implement
-/// scrollViewDidScroll: to tell the ad that the page scrolled, for SuprAd creatives that follow the scroll.
+/// A scrolling page that stacks views vertically, with a status line on top. The ad pages implement
+/// scrollViewDidScroll: to tell AotterTrekSDK that the page scrolled, for Native Multimedia Ads that move with it.
 @interface StackPageViewController : UIViewController <UIScrollViewDelegate>
 @property (nonatomic, readonly) StatusLabel *status;
 @property (nonatomic, readonly) UIStackView *stack;
@@ -31,8 +32,6 @@ UILabel *DemoParagraph(NSInteger number);
 
 /// Pins `view` to every edge of `container`, inset by `inset`.
 void DemoPin(UIView *view, UIView *container, CGFloat inset);
-/// Same, with the bottom edge below required, so a table row can collapse while `view` is hidden.
-void DemoPinInRow(UIView *view, UIView *contentView, CGFloat inset);
 
 /// Shows one AotterTrek native ad. The asset views sit inside an ATKNativeAdView, which the SDK measures, and one
 /// ATKMediaView renders every creative type: an image, HTML5, a web page or a VAST video.
@@ -48,6 +47,10 @@ void DemoPinInRow(UIView *view, UIView *contentView, CGFloat inset);
 @interface AdMobNativeAdCard : UIView
 /// Fills in the assets, then hands the ad to the GADNativeAdView, which registers it.
 - (void)showAd:(GADNativeAd *)nativeAd;
+/// The first half of showAd:: fills in the assets. Call registerAd: once the card is laid out at its size.
+- (void)fillAd:(GADNativeAd *)nativeAd;
+/// The second half of showAd:: lays the card out and hands the ad to the GADNativeAdView.
+- (void)registerAd:(GADNativeAd *)nativeAd;
 @end
 
 /// Which network filled the request, as the mediation report names it.
