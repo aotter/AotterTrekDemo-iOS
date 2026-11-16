@@ -116,4 +116,4 @@ The AppLovin MAX adapter is not covered here.
 
 ## Support
 
-sdk@aotter.net
+robert.hsueh@aotter.net
